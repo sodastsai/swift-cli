@@ -1,0 +1,61 @@
+#!/usr/bin/env swift
+
+import Foundation
+
+
+// Shell function ------------------------------------------------------------------------------------------------------
+
+// Main function, use `@discardableResult` to suppress the unused return function
+@discardableResult func shell(launchPath: String="/usr/bin/env", _ arguments: [String]) -> (Int32, String?, String?) {
+    // Create a NSTask which spawns a subprocess to execute the command
+    let task = Task()
+    task.launchPath = launchPath
+    task.arguments = arguments
+
+    // Use NSPipe to capture stdout and stderr
+    let stdoutPipe = Pipe()
+    let stderrPipe = Pipe()
+    task.standardOutput = stdoutPipe
+    task.standardError = stderrPipe
+
+    // Go and wait for finished
+    task.launch()
+    task.waitUntilExit()
+
+    // Fix the capurted stdout and stderr
+    let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
+    let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+    let stdoutString = String(data: stdoutData, encoding: .utf8)
+    let stderrString = String(data: stderrData, encoding: .utf8)
+
+    // done
+    return (task.terminationStatus, stdoutString, stderrString)
+}
+
+
+// A function which calls `[String]`'s form (overloading)
+@discardableResult func shell(launchPath: String="/usr/bin/env", _ arguments: String...) -> (Int32, String?, String?) {
+    return shell(launchPath: launchPath, arguments)
+}
+
+
+// Main Body -----------------------------------------------------------------------------------------------------------
+
+// Main body
+func main(arguments: [String]) -> Int32 {
+    guard arguments.count > 0 else {
+        print("Cannot find the command to execute.")
+        return 1
+    }
+    print("Would execute the command: \u{001B}[33m\(arguments.joined(separator: " "))\u{001B}[m")
+    let (returnCode, stdout, stderr) = shell(arguments)
+    print(">>> Return code is \(returnCode)")
+    print(">>> Stdout -------------------------------------------------------------------------------------")
+    print(stdout ?? "")
+    print(">>> Stderr -------------------------------------------------------------------------------------")
+    print(stderr ?? "")
+    return 0
+}
+
+// Call the main function
+exit(main(arguments: [String](Process.arguments[1..<Process.arguments.count])))
