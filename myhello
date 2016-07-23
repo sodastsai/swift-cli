@@ -1,0 +1,11 @@
+#!/usr/bin/env swift
+
+// `Process` is an enum providing command-line arguments for the current process.
+// See https://developer.apple.com/reference/swift/process for reference.
+let arguments = Process.arguments
+
+if arguments.count > 1 {
+    print("Hello \(arguments[1])")
+} else {
+    print("Hello World")
+}
