@@ -4,5 +4,6 @@
         <page name='ANSI Escape Code'/>
         <page name='Task'/>
         <page name='ls'/>
+        <page name='Dispatch'/>
     </pages>
 </playground>
