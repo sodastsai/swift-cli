@@ -1,4 +1,3 @@
-
 import Foundation
 
 // Utilities -----------------------------------------------------------------------------------------------------------
@@ -105,8 +104,7 @@ func listDir(path workingPath: String) -> Int32 {
     */
     // 2. Get with `guard`
     guard let contentURLs = try? FileManager.default.contentsOfDirectory(at: workingURL,
-                                                                         includingPropertiesForKeys: urlPropertiesInString)
-        else {
+        includingPropertiesForKeys: urlPropertiesInString) else {
             print("Cannot list the content of \"\(workingPath)\"")
             return 1
     }
@@ -124,7 +122,7 @@ func listDir(path workingPath: String) -> Int32 {
         print(contentPath.with(ANSIEscapeCodes: .yellow))
         print(fileMetadata(ofURL: contentURL, withProperties: Set(urlProperties)))
     }
-    
+
     // Done
     return 0
 }

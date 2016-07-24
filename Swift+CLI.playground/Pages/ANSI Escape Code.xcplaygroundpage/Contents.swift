@@ -1,4 +1,3 @@
-
 // An extension of String to show colors
 extension String {
     enum ANSIEscapeCode: Int {
@@ -45,7 +44,7 @@ extension String {
          // Apply it
          return "\(String.escapeCode)[\(joinedCodeString)m\(self)\(String.escapeCode)[m"
      }
-     
+
      But here, like the next one, we can use **generic** and
      hence all sequence type, like Array and ArraySlice would be acceptable for this function.
     */
