@@ -1,0 +1,78 @@
+#!/usr/bin/env swift -target x86_64-apple-macosx10.12 -F Carthage/Build/Mac
+
+import CommandLine
+import Foundation
+
+
+class StandardErrorOutputStream: OutputStream {
+    func write(_ string: String) {
+        if let data = string.data(using: .utf8) {
+            FileHandle.withStandardError.write(data)
+        }
+    }
+}
+var stderr = StandardErrorOutputStream()
+
+// Main Body -----------------------------------------------------------------------------------------------------------
+
+func wget(urlString: String, outputDocumentPath outputPath: String? = nil) -> Int32 {
+    var resultData: Data!
+    let urlSession = URLSession(configuration: URLSessionConfiguration.default)
+    let dataTaskDispatchGroup = DispatchGroup()
+    // Create url
+    guard let url = URL(string: urlString) else {
+        print("Cannot create an instance of URL from '\(urlString)'", to: &stderr)
+        return 1
+    }
+    // Download
+    let dataTask = urlSession.dataTask(with: url) { (_data, _response, _error) in
+        if let error = _error {
+            print("Failed to fetch \(url): \(error.localizedDescription)", to: &stderr)
+        }
+        if let response = _response as? HTTPURLResponse {
+            print("Done: \(url) - \(response.statusCode)")
+        }
+        if let data = _data {
+            resultData = data
+        }
+        dataTaskDispatchGroup.leave()
+    }
+    print("Start to download: \(url)")
+    dataTaskDispatchGroup.enter()
+    dataTask.resume()
+    dataTaskDispatchGroup.wait()
+    // Handle the result
+    guard let fileName = url.pathComponents?.last else {
+        print("Cannot get file name for \(url)", to: &stderr)
+        return 2
+    }
+    let fileSaveURL = URL(fileURLWithPath: fileName)
+    do {
+        try resultData.write(to: fileSaveURL, options: .atomic)
+    } catch let error as NSError {
+        print("Failed to save result of \(url): \(error.localizedDescription)", to: &stderr)
+    }
+    return 0
+}
+
+
+// Argument parsing and disptaching ------------------------------------------------------------------------------------
+
+let cli = CommandLine()
+// Add options
+let outputDocumentPath = StringOption(shortFlag: "O", longFlag: "output-document", required: false,
+    helpMessage: "Path to save the output file.")
+cli.addOptions(outputDocumentPath)
+// Parse arguments
+do {
+  try cli.parse(strict: true)
+} catch {
+  cli.printUsage(error)
+  exit(EX_USAGE)
+}
+// Go
+guard cli.unparsedArguments.count == 1 else {
+    print("Cannot get url", to: &stderr)
+    exit(EX_USAGE)
+}
+exit(wget(urlString: cli.unparsedArguments[0], outputDocumentPath: outputDocumentPath.value))
