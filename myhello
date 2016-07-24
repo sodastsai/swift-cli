@@ -1,5 +1,7 @@
 #!/usr/bin/env swift
 
+import Foundation
+
 // `Process` is an enum providing command-line arguments for the current process.
 // See https://developer.apple.com/reference/swift/process for reference.
 let arguments = Process.arguments
@@ -9,3 +11,13 @@ if arguments.count > 1 {
 } else {
     print("Hello World")
 }
+
+let progressBarCharacter: Character = "="
+for progress in 0...100 {
+    let progressBar = String(repeating: progressBarCharacter, count: progress)
+    print("\(progressBar) > \(progress)%", terminator: "\r")
+    fflush(__stdoutp)  // flush stdout buffer before sleep
+    Thread.sleep(forTimeInterval: 0.1)
+}
+print("")  // A new line
+print("Done.")
