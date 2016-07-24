@@ -12,3 +12,5 @@ Remember to use **[Carthage](https://github.com/Carthage/Carthage)** to install 
 - `myls`
 - `asynctask`
 - `wget`
+- `adder`
+
