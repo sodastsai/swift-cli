@@ -1,4 +1,4 @@
-SWIFTC=swiftc
+SWIFTC=xcrun swiftc
 SWIFT_FLAGS=-O
 EXECUTABLE=adder
 
