@@ -7,10 +7,11 @@ Remember to use **[Carthage](https://github.com/Carthage/Carthage)** to install 
 
 ## Content (by order)
 
-- `myhello`
-- `myansi`
-- `myls`
-- `asynctask`
-- `wget`
-- `adder`
+- `swift hello.swift`
+- `./myhello`
+- `./myansi`
+- `./myls`
+- `./asynctask`
+- `./wget`
+- `cd adder && make && ./adder`
 
