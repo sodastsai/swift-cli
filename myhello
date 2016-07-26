@@ -16,7 +16,9 @@ let progressBarCharacter: Character = "="
 for progress in 0...100 {
     let progressBar = String(repeating: progressBarCharacter, count: progress)
     print("\(progressBar) > \(progress)%", terminator: "\r")
-    fflush(__stdoutp)  // flush stdout buffer before sleep
+    // flush stdout buffer before sleep (a C function from 'Darwin' -> 'Foundation')
+    fflush(__stdoutp)
+    // Sleep
     Thread.sleep(forTimeInterval: 0.1)
 }
 print("")  // A new line
