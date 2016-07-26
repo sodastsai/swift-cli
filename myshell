@@ -22,7 +22,7 @@ import Foundation
     task.launch()
     task.waitUntilExit()
 
-    // Fix the capurted stdout and stderr
+    // Fix the captured stdout and stderr
     let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
     let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
     let stdoutString = String(data: stdoutData, encoding: .utf8)
